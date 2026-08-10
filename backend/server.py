@@ -34,6 +34,11 @@ DIGEST_TZ = ZoneInfo("Asia/Kolkata")
 app = FastAPI()
 api_router = APIRouter(prefix="/api")
 
+
+@app.get("/health")
+async def health():
+    return {"status": "healthy"}
+
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
