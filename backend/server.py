@@ -26,6 +26,7 @@ EMAIL_BASE_URL = "https://integrations.emergentagent.com"
 EMAIL_KEY = os.environ["EMERGENT_EMAIL_KEY"]
 EMAIL_FROM_NAME = os.environ["EMAIL_FROM_NAME"]
 OWNER_EMAIL = os.environ["OWNER_EMAIL"]
+INSIGHTS_PASSCODE = os.environ.get("INSIGHTS_PASSCODE", "bhavy2026")
 
 app = FastAPI()
 api_router = APIRouter(prefix="/api")
@@ -52,6 +53,14 @@ class ContactCreate(BaseModel):
     name: str = Field(..., min_length=1, max_length=120)
     email: EmailStr
     message: str = Field(..., min_length=1, max_length=4000)
+
+
+ALLOWED_EVENTS = {"page_view", "resume_download"}
+
+
+class TrackEvent(BaseModel):
+    type: str
+    meta: Optional[str] = Field(default=None, max_length=200)
 
 
 # ---------- Helpers ----------
@@ -123,6 +132,43 @@ async def create_contact(payload: ContactCreate):
 async def list_contacts():
     docs = await db.contact_messages.find({}, {"_id": 0}).sort("created_at", -1).to_list(1000)
     return docs
+
+
+@api_router.post("/track")
+async def track_event(payload: TrackEvent):
+    if payload.type not in ALLOWED_EVENTS:
+        raise HTTPException(status_code=422, detail="Invalid event type")
+    doc = {
+        "id": str(uuid.uuid4()),
+        "type": payload.type,
+        "meta": payload.meta,
+        "created_at": datetime.now(timezone.utc).isoformat(),
+    }
+    await db.events.insert_one(doc)
+    return {"status": "ok"}
+
+
+@api_router.get("/insights")
+async def get_insights(code: str):
+    if code != INSIGHTS_PASSCODE:
+        raise HTTPException(status_code=401, detail="Invalid passcode")
+
+    page_views = await db.events.count_documents({"type": "page_view"})
+    resume_downloads = await db.events.count_documents({"type": "resume_download"})
+    contact_submissions = await db.contact_messages.count_documents({})
+
+    recent_messages = await db.contact_messages.find({}, {"_id": 0}).sort("created_at", -1).to_list(20)
+    recent_events = await db.events.find({}, {"_id": 0}).sort("created_at", -1).to_list(30)
+
+    return {
+        "totals": {
+            "page_views": page_views,
+            "resume_downloads": resume_downloads,
+            "contact_submissions": contact_submissions,
+        },
+        "recent_messages": recent_messages,
+        "recent_events": recent_events,
+    }
 
 
 app.include_router(api_router)

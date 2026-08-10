@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import Lenis from "lenis";
 import { Toaster } from "sonner";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "@/App.css";
 import { Navbar } from "@/components/site/Navbar";
 import { CustomCursor } from "@/components/site/CustomCursor";
@@ -11,9 +12,12 @@ import { Experience } from "@/components/site/Experience";
 import { Projects } from "@/components/site/Projects";
 import { Skills } from "@/components/site/Skills";
 import { Contact } from "@/components/site/Contact";
+import Insights from "@/pages/Insights";
+import { trackPageView } from "@/lib/track";
 
-function App() {
+function Portfolio() {
   useEffect(() => {
+    trackPageView();
     const lenis = new Lenis({
       duration: 1.15,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
@@ -32,7 +36,24 @@ function App() {
   }, []);
 
   return (
-    <div className="App grain relative min-h-screen bg-[#0A0A0F]">
+    <div className="grain relative min-h-screen bg-[#0A0A0F]">
+      <Navbar />
+      <main className="relative z-10">
+        <Hero />
+        <Marquee />
+        <About />
+        <Experience />
+        <Projects />
+        <Skills />
+        <Contact />
+      </main>
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <div className="App">
       <CustomCursor />
       <Toaster
         theme="dark"
@@ -45,16 +66,12 @@ function App() {
           },
         }}
       />
-      <Navbar />
-      <main className="relative z-10">
-        <Hero />
-        <Marquee />
-        <About />
-        <Experience />
-        <Projects />
-        <Skills />
-        <Contact />
-      </main>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Portfolio />} />
+          <Route path="/insights" element={<Insights />} />
+        </Routes>
+      </BrowserRouter>
     </div>
   );
 }

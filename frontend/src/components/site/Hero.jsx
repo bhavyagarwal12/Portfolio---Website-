@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Download, ArrowDown } from "lucide-react";
 import { PROFILE } from "../../data";
+import { trackEvent } from "../../lib/track";
 
 const useLocalTime = () => {
   const [time, setTime] = useState("");
@@ -156,6 +157,7 @@ export const Hero = () => {
           <a
             href={PROFILE.resume}
             download
+            onClick={() => trackEvent("resume_download", "hero")}
             data-testid="hero-resume-download"
             className="inline-flex items-center gap-2 rounded-full bg-[#7C5CFC] px-6 py-3 font-medium text-white transition-all duration-300 hover:bg-[#8B7CF6] hover:shadow-[0_0_30px_rgba(124,92,252,0.5)]"
           >
