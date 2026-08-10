@@ -3,6 +3,7 @@ import Lenis from "lenis";
 import { Toaster } from "sonner";
 import "@/App.css";
 import { Navbar } from "@/components/site/Navbar";
+import { CustomCursor } from "@/components/site/CustomCursor";
 import { Hero } from "@/components/site/Hero";
 import { Marquee } from "@/components/site/Marquee";
 import { About } from "@/components/site/About";
@@ -32,6 +33,7 @@ function App() {
 
   return (
     <div className="App grain relative min-h-screen bg-[#0A0A0F]">
+      <CustomCursor />
       <Toaster
         theme="dark"
         position="bottom-right"

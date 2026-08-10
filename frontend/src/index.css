@@ -76,6 +76,13 @@ body {
 .marquee-track {
   animation: marquee 32s linear infinite;
 }
+
+@media (pointer: fine) {
+  body.has-custom-cursor,
+  body.has-custom-cursor * {
+    cursor: none !important;
+  }
+}
 @keyframes marquee {
   from {
     transform: translateX(0);
