@@ -1,7 +1,8 @@
 import { useState } from "react";
 import axios from "axios";
+import { toast } from "sonner";
 import { motion } from "framer-motion";
-import { Lock, Download, Mail, Eye, Loader2, RefreshCw, ArrowLeft } from "lucide-react";
+import { Lock, Download, Mail, Eye, Loader2, RefreshCw, ArrowLeft, Send } from "lucide-react";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
@@ -23,6 +24,24 @@ export default function Insights() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [sending, setSending] = useState(false);
+
+  const sendDigest = async () => {
+    setSending(true);
+    try {
+      const res = await axios.post(`${API}/digest/send`, null, {
+        params: { code, force: true },
+      });
+      const t = res.data.totals;
+      toast.success(
+        `Digest emailed to Bhavy — ${t.page_views} views, ${t.resume_downloads} downloads, ${t.new_messages} messages.`
+      );
+    } catch (e) {
+      toast.error("Couldn't send digest. Please try again.");
+    } finally {
+      setSending(false);
+    }
+  };
 
   const load = async (passcode) => {
     setLoading(true);
@@ -104,13 +123,24 @@ export default function Insights() {
             <p className="font-display text-sm uppercase tracking-[0.3em] text-[#7C5CFC]">Dashboard</p>
             <h1 className="mt-2 font-display text-4xl font-semibold text-[#F5F5F7]">Visitor Insights</h1>
           </div>
-          <button
-            onClick={() => load(code)}
-            data-testid="insights-refresh"
-            className="inline-flex items-center gap-2 rounded-full border border-white/10 px-4 py-2 text-sm text-[#F5F5F7] transition-colors hover:border-white/30"
-          >
-            <RefreshCw className="h-4 w-4" /> Refresh
-          </button>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={sendDigest}
+              disabled={sending}
+              data-testid="insights-send-digest"
+              className="inline-flex items-center gap-2 rounded-full bg-[#7C5CFC] px-4 py-2 text-sm font-medium text-white transition-all duration-300 hover:bg-[#8B7CF6] hover:shadow-[0_0_24px_rgba(124,92,252,0.5)] disabled:opacity-60"
+            >
+              {sending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+              Send digest
+            </button>
+            <button
+              onClick={() => load(code)}
+              data-testid="insights-refresh"
+              className="inline-flex items-center gap-2 rounded-full border border-white/10 px-4 py-2 text-sm text-[#F5F5F7] transition-colors hover:border-white/30"
+            >
+              <RefreshCw className="h-4 w-4" /> Refresh
+            </button>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">

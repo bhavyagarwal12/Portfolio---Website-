@@ -9,7 +9,9 @@ import httpx
 from pathlib import Path
 from pydantic import BaseModel, Field, ConfigDict, EmailStr
 from typing import List, Optional, Annotated
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
+from zoneinfo import ZoneInfo
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
 import uuid
 
 
@@ -27,6 +29,7 @@ EMAIL_KEY = os.environ["EMERGENT_EMAIL_KEY"]
 EMAIL_FROM_NAME = os.environ["EMAIL_FROM_NAME"]
 OWNER_EMAIL = os.environ["OWNER_EMAIL"]
 INSIGHTS_PASSCODE = os.environ.get("INSIGHTS_PASSCODE", "bhavy2026")
+DIGEST_TZ = ZoneInfo("Asia/Kolkata")
 
 app = FastAPI()
 api_router = APIRouter(prefix="/api")
@@ -106,6 +109,104 @@ async def _send_owner_email(payload_msg: ContactMessage):
     return resp.json().get("id")
 
 
+async def _post_email(subject: str, html_content: str):
+    payload = {
+        "to": [OWNER_EMAIL],
+        "subject": subject,
+        "html": html_content,
+        "from_name": EMAIL_FROM_NAME,
+    }
+    async with httpx.AsyncClient(timeout=30) as http_client:
+        resp = await http_client.post(
+            f"{EMAIL_BASE_URL}/api/v1/email/send",
+            headers={"X-Email-Key": EMAIL_KEY},
+            json=payload,
+        )
+    resp.raise_for_status()
+    return resp.json().get("id")
+
+
+async def build_and_send_digest(force: bool = False):
+    """Summarize yesterday's activity (IST day) and email the owner."""
+    now_ist = datetime.now(DIGEST_TZ)
+    y_start_ist = (now_ist - timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
+    y_end_ist = now_ist.replace(hour=0, minute=0, second=0, microsecond=0)
+    start_utc = y_start_ist.astimezone(timezone.utc).isoformat()
+    end_utc = y_end_ist.astimezone(timezone.utc).isoformat()
+    window = {"created_at": {"$gte": start_utc, "$lt": end_utc}}
+
+    page_views = await db.events.count_documents({**window, "type": "page_view"})
+    downloads = await db.events.count_documents({**window, "type": "resume_download"})
+    messages = await db.contact_messages.find({**window}, {"_id": 0}).sort("created_at", -1).to_list(50)
+
+    if not force and page_views == 0 and downloads == 0 and len(messages) == 0:
+        return {"status": "skipped", "reason": "no activity", "date": y_start_ist.strftime("%Y-%m-%d")}
+
+    day_label = y_start_ist.strftime("%A, %b %d, %Y")
+
+    def stat_cell(value, label):
+        return f"""<td width="33%" align="center" style="padding:8px;">
+            <div style="background:#0f0f16;border:1px solid rgba(124,92,252,0.25);border-radius:14px;padding:18px 8px;">
+              <div style="color:#F5F5F7;font-size:30px;font-weight:700;">{value}</div>
+              <div style="color:#9A9AA5;font-size:11px;letter-spacing:1px;text-transform:uppercase;margin-top:4px;">{label}</div>
+            </div></td>"""
+
+    if messages:
+        msg_rows = "".join(
+            f"""<tr><td style="padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.06);">
+                <div style="color:#F5F5F7;font-size:14px;font-weight:600;">{html_lib.escape(m['name'])}
+                  <span style="color:#8B7CF6;font-weight:400;">&lt;{html_lib.escape(m['email'])}&gt;</span></div>
+                <div style="color:#9A9AA5;font-size:13px;line-height:1.5;margin-top:4px;">{html_lib.escape(m['message'][:220])}</div>
+              </td></tr>"""
+            for m in messages
+        )
+        messages_block = f"""
+          <tr><td style="padding:20px 28px 6px 28px;">
+            <p style="margin:0;color:#8B7CF6;font-size:12px;letter-spacing:2px;text-transform:uppercase;">New Messages ({len(messages)})</p>
+          </td></tr>
+          <tr><td style="padding:0 28px 12px 28px;"><table width="100%" cellpadding="0" cellspacing="0">{msg_rows}</table></td></tr>
+        """
+    else:
+        messages_block = """
+          <tr><td style="padding:16px 28px;">
+            <p style="margin:0;color:#6C6C7A;font-size:13px;">No new messages yesterday.</p>
+          </td></tr>
+        """
+
+    html_content = f"""
+    <table width="100%" cellpadding="0" cellspacing="0" style="background:#0A0A0F;padding:24px;font-family:Arial,Helvetica,sans-serif;">
+      <tr><td>
+        <table width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;margin:0 auto;background:#111116;border-radius:16px;border:1px solid rgba(124,92,252,0.25);overflow:hidden;">
+          <tr><td style="padding:28px 28px 4px 28px;">
+            <p style="margin:0;color:#8B7CF6;font-size:12px;letter-spacing:2px;text-transform:uppercase;">Daily Digest</p>
+            <h1 style="margin:8px 0 0 0;color:#F5F5F7;font-size:22px;">Your portfolio yesterday</h1>
+            <p style="margin:6px 0 0 0;color:#9A9AA5;font-size:13px;">{day_label}</p>
+          </td></tr>
+          <tr><td style="padding:18px 20px 6px 20px;">
+            <table width="100%" cellpadding="0" cellspacing="0"><tr>
+              {stat_cell(page_views, "Page Views")}
+              {stat_cell(downloads, "Resume Downloads")}
+              {stat_cell(len(messages), "New Messages")}
+            </tr></table>
+          </td></tr>
+          {messages_block}
+          <tr><td style="padding:16px 28px 28px 28px;border-top:1px solid rgba(255,255,255,0.06);">
+            <p style="margin:0;color:#6C6C7A;font-size:12px;">Bhavy Agarwal Portfolio • automated morning digest</p>
+          </td></tr>
+        </table>
+      </td></tr>
+    </table>
+    """
+
+    email_id = await _post_email(f"Portfolio digest — {y_start_ist.strftime('%b %d')}", html_content)
+    return {
+        "status": "sent",
+        "date": y_start_ist.strftime("%Y-%m-%d"),
+        "totals": {"page_views": page_views, "resume_downloads": downloads, "new_messages": len(messages)},
+        "email_id": email_id,
+    }
+
+
 # ---------- Routes ----------
 @api_router.get("/")
 async def root():
@@ -171,6 +272,18 @@ async def get_insights(code: str):
     }
 
 
+@api_router.post("/digest/send")
+async def send_digest(code: str, force: bool = True):
+    if code != INSIGHTS_PASSCODE:
+        raise HTTPException(status_code=401, detail="Invalid passcode")
+    try:
+        result = await build_and_send_digest(force=force)
+        return result
+    except httpx.HTTPStatusError as e:
+        logger.error(f"Digest email failed: {e.response.status_code} {e.response.text}")
+        raise HTTPException(status_code=502, detail="Failed to send digest")
+
+
 app.include_router(api_router)
 
 app.add_middleware(
@@ -183,7 +296,25 @@ app.add_middleware(
 
 logger.info("Bhavy Agarwal Portfolio API started")
 
+scheduler = AsyncIOScheduler(timezone=DIGEST_TZ)
+
+
+@app.on_event("startup")
+async def start_scheduler():
+    scheduler.add_job(
+        build_and_send_digest,
+        "cron",
+        hour=8,
+        minute=0,
+        id="daily_digest",
+        replace_existing=True,
+    )
+    scheduler.start()
+    logger.info("Daily digest scheduler started (08:00 Asia/Kolkata)")
+
 
 @app.on_event("shutdown")
 async def shutdown_db_client():
+    if scheduler.running:
+        scheduler.shutdown(wait=False)
     client.close()
