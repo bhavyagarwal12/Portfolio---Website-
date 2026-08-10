@@ -3,6 +3,7 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { Download, ArrowDown } from "lucide-react";
 import { PROFILE } from "../../data";
 import { trackEvent } from "../../lib/track";
+import { Magnetic } from "./Magnetic";
 
 const useLocalTime = () => {
   const [time, setTime] = useState("");
@@ -154,23 +155,27 @@ export const Hero = () => {
           transition={{ delay: 1, duration: 0.8 }}
           className="mt-9 flex flex-wrap items-center justify-center gap-4"
         >
-          <a
-            href={PROFILE.resume}
-            download
-            onClick={() => trackEvent("resume_download", "hero")}
-            data-testid="hero-resume-download"
-            className="inline-flex items-center gap-2 rounded-full bg-[#7C5CFC] px-6 py-3 font-medium text-white transition-all duration-300 hover:bg-[#8B7CF6] hover:shadow-[0_0_30px_rgba(124,92,252,0.5)]"
-          >
-            <Download className="h-4 w-4" />
-            Download Resume
-          </a>
-          <a
-            href={`mailto:${PROFILE.email}`}
-            data-testid="hero-email-cta"
-            className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-transparent px-6 py-3 font-medium text-[#F5F5F7] backdrop-blur-md transition-colors duration-300 hover:border-white/30"
-          >
-            Email Me
-          </a>
+          <Magnetic>
+            <a
+              href={PROFILE.resume}
+              download
+              onClick={() => trackEvent("resume_download", "hero")}
+              data-testid="hero-resume-download"
+              className="inline-flex items-center gap-2 rounded-full bg-[#7C5CFC] px-6 py-3 font-medium text-white transition-all duration-300 hover:bg-[#8B7CF6] hover:shadow-[0_0_30px_rgba(124,92,252,0.5)]"
+            >
+              <Download className="h-4 w-4" />
+              Download Resume
+            </a>
+          </Magnetic>
+          <Magnetic>
+            <a
+              href={`mailto:${PROFILE.email}`}
+              data-testid="hero-email-cta"
+              className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-transparent px-6 py-3 font-medium text-[#F5F5F7] backdrop-blur-md transition-colors duration-300 hover:border-white/30"
+            >
+              Email Me
+            </a>
+          </Magnetic>
         </motion.div>
       </motion.div>
 

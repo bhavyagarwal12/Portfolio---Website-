@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { Mail, Phone, Linkedin, Github, ArrowUpRight, Send, Loader2 } from "lucide-react";
 import { Reveal } from "./Reveal";
 import { PROFILE } from "../../data";
+import { Magnetic } from "./Magnetic";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
@@ -101,15 +102,17 @@ export const Contact = () => {
                     className="w-full resize-none rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-[#F5F5F7] outline-none transition-colors duration-300 placeholder:text-[#6C6C7A] focus:border-[#7C5CFC]"
                   />
                 </div>
-                <button
-                  type="submit"
-                  disabled={loading}
-                  data-testid="contact-submit"
-                  className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#7C5CFC] px-6 py-3.5 font-medium text-white transition-all duration-300 hover:bg-[#8B7CF6] hover:shadow-[0_0_30px_rgba(124,92,252,0.5)] disabled:opacity-60"
-                >
-                  {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-                  {loading ? "Sending..." : "Send Message"}
-                </button>
+                <Magnetic block strength={0.25}>
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    data-testid="contact-submit"
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#7C5CFC] px-6 py-3.5 font-medium text-white transition-all duration-300 hover:bg-[#8B7CF6] hover:shadow-[0_0_30px_rgba(124,92,252,0.5)] disabled:opacity-60"
+                  >
+                    {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+                    {loading ? "Sending..." : "Send Message"}
+                  </button>
+                </Magnetic>
               </div>
             </form>
           </Reveal>

@@ -5,6 +5,7 @@ import { ArrowLeft, ArrowUpRight, Github } from "lucide-react";
 import { CASE_STUDIES, CASE_STUDY_ORDER } from "../caseStudies";
 import { ChartBlock } from "../components/site/ChartBlock";
 import { Reveal } from "../components/site/Reveal";
+import { Magnetic } from "../components/site/Magnetic";
 
 export default function CaseStudy() {
   const { slug } = useParams();
@@ -85,15 +86,17 @@ export default function CaseStudy() {
                   {s}
                 </span>
               ))}
-              <a
-                href={cs.github}
-                target="_blank"
-                rel="noopener noreferrer"
-                data-testid="case-study-github"
-                className="ml-1 inline-flex items-center gap-2 rounded-full bg-[#7C5CFC] px-4 py-2 text-sm font-medium text-white transition-all duration-300 hover:bg-[#8B7CF6] hover:shadow-[0_0_24px_rgba(124,92,252,0.5)]"
-              >
-                <Github className="h-4 w-4" /> View Repo
-              </a>
+              <Magnetic className="ml-1">
+                <a
+                  href={cs.github}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  data-testid="case-study-github"
+                  className="inline-flex items-center gap-2 rounded-full bg-[#7C5CFC] px-4 py-2 text-sm font-medium text-white transition-all duration-300 hover:bg-[#8B7CF6] hover:shadow-[0_0_24px_rgba(124,92,252,0.5)]"
+                >
+                  <Github className="h-4 w-4" /> View Repo
+                </a>
+              </Magnetic>
             </div>
           </Reveal>
         </div>

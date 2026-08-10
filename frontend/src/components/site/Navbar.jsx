@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import { NAV, PROFILE } from "../../data";
+import { Magnetic } from "./Magnetic";
 
 const scrollTo = (id) => {
   const el = document.getElementById(id);
@@ -61,14 +62,16 @@ export const Navbar = () => {
             <span className="relative z-10 sm:hidden">{n.label.slice(0, 4)}</span>
           </button>
         ))}
-        <button
-          onClick={() => scrollTo("contact")}
-          data-testid="nav-lets-talk"
-          className="ml-1 inline-flex items-center gap-1 rounded-full bg-[#7C5CFC] px-4 py-2 text-sm font-medium text-white transition-all duration-300 hover:bg-[#8B7CF6] hover:shadow-[0_0_24px_rgba(124,92,252,0.55)]"
-        >
-          Let's Talk
-          <ArrowUpRight className="h-4 w-4" />
-        </button>
+        <Magnetic className="ml-1">
+          <button
+            onClick={() => scrollTo("contact")}
+            data-testid="nav-lets-talk"
+            className="inline-flex items-center gap-1 rounded-full bg-[#7C5CFC] px-4 py-2 text-sm font-medium text-white transition-all duration-300 hover:bg-[#8B7CF6] hover:shadow-[0_0_24px_rgba(124,92,252,0.55)]"
+          >
+            Let's Talk
+            <ArrowUpRight className="h-4 w-4" />
+          </button>
+        </Magnetic>
       </div>
     </motion.nav>
   );
