@@ -207,6 +207,102 @@ async def build_and_send_digest(force: bool = False):
     }
 
 
+async def build_and_send_weekly_recap(force: bool = False):
+    """Summarize the previous full week (Mon–Sun, IST) and email the owner."""
+    now_ist = datetime.now(DIGEST_TZ)
+    this_monday = (now_ist - timedelta(days=now_ist.weekday())).replace(
+        hour=0, minute=0, second=0, microsecond=0
+    )
+    week_start = this_monday - timedelta(days=7)
+    week_end = this_monday
+    start_utc = week_start.astimezone(timezone.utc).isoformat()
+    end_utc = week_end.astimezone(timezone.utc).isoformat()
+    window = {"created_at": {"$gte": start_utc, "$lt": end_utc}}
+
+    page_views = await db.events.count_documents({**window, "type": "page_view"})
+    downloads = await db.events.count_documents({**window, "type": "resume_download"})
+    messages = await db.contact_messages.count_documents({**window})
+
+    if not force and page_views == 0 and downloads == 0 and messages == 0:
+        return {"status": "skipped", "reason": "no activity", "week_start": week_start.strftime("%Y-%m-%d")}
+
+    # daily page-view breakdown for a mini trend
+    days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+    daily = []
+    for i in range(7):
+        d_start = week_start + timedelta(days=i)
+        d_end = d_start + timedelta(days=1)
+        dw = {
+            "type": "page_view",
+            "created_at": {
+                "$gte": d_start.astimezone(timezone.utc).isoformat(),
+                "$lt": d_end.astimezone(timezone.utc).isoformat(),
+            },
+        }
+        daily.append(await db.events.count_documents(dw))
+    peak = max(daily) or 1
+
+    bar_rows = "".join(
+        f"""<tr>
+            <td width="42" style="color:#9A9AA5;font-size:12px;padding:5px 8px 5px 0;">{days[i]}</td>
+            <td style="padding:5px 0;">
+              <div style="background:rgba(255,255,255,0.05);border-radius:6px;height:12px;width:100%;">
+                <div style="background:linear-gradient(90deg,#7C5CFC,#8B7CF6);height:12px;border-radius:6px;width:{int(daily[i]/peak*100)}%;"></div>
+              </div>
+            </td>
+            <td width="34" align="right" style="color:#F5F5F7;font-size:12px;padding:5px 0 5px 8px;">{daily[i]}</td>
+          </tr>"""
+        for i in range(7)
+    )
+
+    def stat_cell(value, label):
+        return f"""<td width="33%" align="center" style="padding:8px;">
+            <div style="background:#0f0f16;border:1px solid rgba(124,92,252,0.25);border-radius:14px;padding:18px 8px;">
+              <div style="color:#F5F5F7;font-size:30px;font-weight:700;">{value}</div>
+              <div style="color:#9A9AA5;font-size:11px;letter-spacing:1px;text-transform:uppercase;margin-top:4px;">{label}</div>
+            </div></td>"""
+
+    range_label = f"{week_start.strftime('%b %d')} – {(week_end - timedelta(days=1)).strftime('%b %d, %Y')}"
+
+    html_content = f"""
+    <table width="100%" cellpadding="0" cellspacing="0" style="background:#0A0A0F;padding:24px;font-family:Arial,Helvetica,sans-serif;">
+      <tr><td>
+        <table width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;margin:0 auto;background:#111116;border-radius:16px;border:1px solid rgba(124,92,252,0.25);overflow:hidden;">
+          <tr><td style="padding:28px 28px 4px 28px;">
+            <p style="margin:0;color:#8B7CF6;font-size:12px;letter-spacing:2px;text-transform:uppercase;">Weekly Recap</p>
+            <h1 style="margin:8px 0 0 0;color:#F5F5F7;font-size:22px;">Last week on your portfolio</h1>
+            <p style="margin:6px 0 0 0;color:#9A9AA5;font-size:13px;">{range_label}</p>
+          </td></tr>
+          <tr><td style="padding:18px 20px 6px 20px;">
+            <table width="100%" cellpadding="0" cellspacing="0"><tr>
+              {stat_cell(page_views, "Page Views")}
+              {stat_cell(downloads, "Resume Downloads")}
+              {stat_cell(messages, "New Messages")}
+            </tr></table>
+          </td></tr>
+          <tr><td style="padding:14px 28px 8px 28px;">
+            <p style="margin:0 0 8px 0;color:#8B7CF6;font-size:12px;letter-spacing:2px;text-transform:uppercase;">Page views by day</p>
+            <table width="100%" cellpadding="0" cellspacing="0">{bar_rows}</table>
+          </td></tr>
+          <tr><td style="padding:16px 28px 28px 28px;border-top:1px solid rgba(255,255,255,0.06);">
+            <p style="margin:0;color:#6C6C7A;font-size:12px;">Bhavy Agarwal Portfolio • automated weekly recap</p>
+          </td></tr>
+        </table>
+      </td></tr>
+    </table>
+    """
+
+    email_id = await _post_email(f"Portfolio weekly recap — {range_label}", html_content)
+    return {
+        "status": "sent",
+        "week_start": week_start.strftime("%Y-%m-%d"),
+        "totals": {"page_views": page_views, "resume_downloads": downloads, "new_messages": messages},
+        "daily_page_views": daily,
+        "email_id": email_id,
+    }
+
+
+
 # ---------- Routes ----------
 @api_router.get("/")
 async def root():
@@ -284,6 +380,18 @@ async def send_digest(code: str, force: bool = True):
         raise HTTPException(status_code=502, detail="Failed to send digest")
 
 
+@api_router.post("/weekly/send")
+async def send_weekly(code: str, force: bool = True):
+    if code != INSIGHTS_PASSCODE:
+        raise HTTPException(status_code=401, detail="Invalid passcode")
+    try:
+        result = await build_and_send_weekly_recap(force=force)
+        return result
+    except httpx.HTTPStatusError as e:
+        logger.error(f"Weekly recap email failed: {e.response.status_code} {e.response.text}")
+        raise HTTPException(status_code=502, detail="Failed to send weekly recap")
+
+
 app.include_router(api_router)
 
 app.add_middleware(
@@ -309,8 +417,17 @@ async def start_scheduler():
         id="daily_digest",
         replace_existing=True,
     )
+    scheduler.add_job(
+        build_and_send_weekly_recap,
+        "cron",
+        day_of_week="mon",
+        hour=8,
+        minute=5,
+        id="weekly_recap",
+        replace_existing=True,
+    )
     scheduler.start()
-    logger.info("Daily digest scheduler started (08:00 Asia/Kolkata)")
+    logger.info("Schedulers started: daily digest 08:00 IST, weekly recap Mon 08:05 IST")
 
 
 @app.on_event("shutdown")
