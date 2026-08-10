@@ -58,6 +58,7 @@ export const EXPERIENCE = [
 export const PROJECTS = [
   {
     no: "01",
+    slug: "udaan",
     title: "UDAAN — Student Performance Analytics",
     period: "Apr 2026",
     stack: ["Python", "SQL", "Power BI", "Excel"],
@@ -69,6 +70,7 @@ export const PROJECTS = [
   },
   {
     no: "02",
+    slug: "retail-intelligence",
     title: "Retail Intelligence & Sales Forecasting",
     period: "May 2026",
     stack: ["Python", "SQL", "Flask", "Power BI", "ML"],
@@ -80,6 +82,7 @@ export const PROJECTS = [
   },
   {
     no: "03",
+    slug: "job-market-analyzer",
     title: "Global Data Job Market Analyzer",
     period: "Jun 2026",
     stack: ["Python", "SQL", "Flask", "SQLite", "ETL"],

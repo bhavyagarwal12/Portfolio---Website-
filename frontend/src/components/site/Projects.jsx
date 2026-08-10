@@ -1,4 +1,5 @@
 import { ArrowUpRight } from "lucide-react";
+import { Link } from "react-router-dom";
 import { Reveal, ChapterLabel } from "./Reveal";
 import { PROJECTS } from "../../data";
 
@@ -15,10 +16,8 @@ export const Projects = () => (
     <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
       {PROJECTS.map((p, i) => (
         <Reveal key={p.no} delay={i * 0.08}>
-          <a
-            href={p.link}
-            target="_blank"
-            rel="noopener noreferrer"
+          <Link
+            to={`/project/${p.slug}`}
             data-testid={`project-card-${p.no}`}
             className="group flex h-full flex-col overflow-hidden rounded-3xl border border-white/5 bg-[#111116] transition-colors duration-500 hover:border-[#7C5CFC]/40"
           >
@@ -60,7 +59,7 @@ export const Projects = () => (
                 <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
               </div>
             </div>
-          </a>
+          </Link>
         </Reveal>
       ))}
     </div>

@@ -5,6 +5,7 @@ import pytest
 
 BASE_URL = os.environ.get("REACT_APP_BACKEND_URL", "").rstrip("/") or "https://portfolio-showcase-3588.preview.emergentagent.com"
 API = f"{BASE_URL}/api"
+INSIGHTS_CODE = "bhavy2026"
 
 
 # ---------- Health ----------
@@ -70,3 +71,55 @@ def test_resume_pdf_served():
     r = requests.get(f"{BASE_URL}/Bhavy_Agarwal_Resume.pdf", timeout=30)
     assert r.status_code == 200
     assert len(r.content) > 500  # non-empty
+
+
+# ---------- Track events ----------
+def test_track_page_view_ok():
+    r = requests.post(f"{API}/track", json={"type": "page_view"}, timeout=30)
+    assert r.status_code == 200, r.text
+    assert r.json().get("status") == "ok"
+
+
+def test_track_resume_download_ok():
+    r = requests.post(f"{API}/track", json={"type": "resume_download", "meta": "TEST_meta"}, timeout=30)
+    assert r.status_code == 200
+    assert r.json().get("status") == "ok"
+
+
+def test_track_invalid_type_422():
+    r = requests.post(f"{API}/track", json={"type": "bogus_event"}, timeout=30)
+    assert r.status_code == 422
+
+
+# ---------- Insights ----------
+def test_insights_wrong_code_401():
+    r = requests.get(f"{API}/insights", params={"code": "wrong"}, timeout=30)
+    assert r.status_code == 401
+
+
+def test_insights_missing_code_422():
+    r = requests.get(f"{API}/insights", timeout=30)
+    assert r.status_code == 422
+
+
+def test_insights_valid_returns_totals_and_recents():
+    # Ensure at least one event exists first
+    requests.post(f"{API}/track", json={"type": "page_view"}, timeout=30)
+    r = requests.get(f"{API}/insights", params={"code": INSIGHTS_CODE}, timeout=30)
+    assert r.status_code == 200, r.text
+    data = r.json()
+    assert "totals" in data
+    totals = data["totals"]
+    for k in ("page_views", "resume_downloads", "contact_submissions"):
+        assert k in totals
+        assert isinstance(totals[k], int)
+    assert isinstance(data.get("recent_messages"), list)
+    assert isinstance(data.get("recent_events"), list)
+    # page_views > 0 since we just posted one
+    assert totals["page_views"] >= 1
+    # ObjectId excluded
+    for ev in data["recent_events"]:
+        assert "_id" not in ev
+    for m in data["recent_messages"]:
+        assert "_id" not in m
+

@@ -13,6 +13,7 @@ import { Projects } from "@/components/site/Projects";
 import { Skills } from "@/components/site/Skills";
 import { Contact } from "@/components/site/Contact";
 import Insights from "@/pages/Insights";
+import CaseStudy from "@/pages/CaseStudy";
 import { trackPageView } from "@/lib/track";
 
 function Portfolio() {
@@ -69,6 +70,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Portfolio />} />
+          <Route path="/project/:slug" element={<CaseStudy />} />
           <Route path="/insights" element={<Insights />} />
         </Routes>
       </BrowserRouter>
