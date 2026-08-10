@@ -16,6 +16,16 @@ export const CASE_STUDIES = {
       "https://images.unsplash.com/photo-1776702683574-f91f73a3cd26?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1NTZ8MHwxfHNlYXJjaHw0fHxkYXRhJTIwYW5hbHl0aWNzJTIwZGFzaGJvYXJkJTIwZGFyayUyMG1vZGV8ZW58MHx8fHwxNzg2MzgxMzc2fDA&ixlib=rb-4.1.0&q=85",
     tagline:
       "Turning 500+ raw academic records into an early-warning system that flags at-risk students before they fall behind.",
+    gallery: [
+      {
+        src: "https://static.prod-images.emergentagent.com/jobs/3fcd0825-809e-4f4f-95e3-b30cb02f1774/images/8489fa966f043db7d893600f871bbb81257d03a4ea00fb5d10359a316331f979.jpeg",
+        caption: "Main Power BI dashboard — GPA, attendance & at-risk KPIs",
+      },
+      {
+        src: "https://static.prod-images.emergentagent.com/jobs/3fcd0825-809e-4f4f-95e3-b30cb02f1774/images/56feb75708c3c201d8a5100c2136d1fdaad01c83fe66d50a07a91c452d2be661.jpeg",
+        caption: "Risk model evaluation — accuracy, precision & ranked watch-list",
+      },
+    ],
     metrics: [
       { value: "500+", label: "Student records analyzed" },
       { value: "8", label: "KPIs tracked" },
@@ -89,6 +99,16 @@ export const CASE_STUDIES = {
       "https://images.unsplash.com/photo-1551288049-bebda4e38f71?crop=entropy&cs=srgb&fm=jpg&q=85&w=1200",
     tagline:
       "An automated pipeline that turns 7,650 transactions into forecasts and customer segments that actually drive stocking and marketing calls.",
+    gallery: [
+      {
+        src: "https://static.prod-images.emergentagent.com/jobs/3fcd0825-809e-4f4f-95e3-b30cb02f1774/images/88d5ad097ea014b21db85a5cf98da7979cd5de517555bb1de06eb05382e2cb48.jpeg",
+        caption: "Flask sales dashboard — revenue KPIs & actual-vs-forecast",
+      },
+      {
+        src: "https://static.prod-images.emergentagent.com/jobs/3fcd0825-809e-4f4f-95e3-b30cb02f1774/images/93d864a20ab54a4915e09f33b6a034797abd75fdcbe5b0cec4b6c7c7a5c1921f.jpeg",
+        caption: "Customer RFM segmentation & monthly revenue heatmap",
+      },
+    ],
     metrics: [
       { value: "7,650", label: "Transactions processed" },
       { value: "~18%", label: "Fewer data errors" },
@@ -167,6 +187,16 @@ export const CASE_STUDIES = {
       "https://images.unsplash.com/photo-1618556450991-2f1af64e8191?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjY2NzN8MHwxfHNlYXJjaHwxfHxhYnN0cmFjdCUyMHRlY2hub2xvZ3klMjBuZXR3b3JrfGVufDB8fHxwdXJwbGV8MTc4NjM4MTM3Nnww&ixlib=rb-4.1.0&q=85",
     tagline:
       "5,000+ job listings distilled into salary trends, in-demand skills, and a Career Pathfinder that tells you exactly which skills to learn next.",
+    gallery: [
+      {
+        src: "https://static.prod-images.emergentagent.com/jobs/3fcd0825-809e-4f4f-95e3-b30cb02f1774/images/f9d4294976658ad0eb888c19067774fc708ecb49d08dc920176b3b1c2c714fc2.jpeg",
+        caption: "Market analytics — in-demand skills & salary distribution",
+      },
+      {
+        src: "https://static.prod-images.emergentagent.com/jobs/3fcd0825-809e-4f4f-95e3-b30cb02f1774/images/bd4ed0d73f4192fe5df39619578e29b4729eca19a924b7111e21864eb72d1040.jpeg",
+        caption: "Career Pathfinder — top skill gaps & salary by seniority",
+      },
+    ],
     metrics: [
       { value: "5,000+", label: "Job listings analyzed" },
       { value: "20+", label: "Optimized SQL queries" },

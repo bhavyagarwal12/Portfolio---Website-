@@ -123,3 +123,28 @@ def test_insights_valid_returns_totals_and_recents():
     for m in data["recent_messages"]:
         assert "_id" not in m
 
+
+# ---------- Digest & Weekly email endpoints ----------
+def test_digest_send_wrong_code_401():
+    r = requests.post(f"{API}/digest/send", params={"code": "wrong", "force": "true"}, timeout=60)
+    assert r.status_code == 401
+
+
+def test_digest_send_valid_returns_sent():
+    r = requests.post(f"{API}/digest/send", params={"code": INSIGHTS_CODE, "force": "true"}, timeout=90)
+    assert r.status_code == 200, r.text
+    data = r.json()
+    assert data.get("status") == "sent"
+
+
+def test_weekly_send_wrong_code_401():
+    r = requests.post(f"{API}/weekly/send", params={"code": "wrong", "force": "true"}, timeout=60)
+    assert r.status_code == 401
+
+
+def test_weekly_send_valid_returns_sent():
+    r = requests.post(f"{API}/weekly/send", params={"code": INSIGHTS_CODE, "force": "true"}, timeout=90)
+    assert r.status_code == 200, r.text
+    data = r.json()
+    assert data.get("status") == "sent"
+

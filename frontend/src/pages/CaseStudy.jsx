@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { ArrowLeft, ArrowUpRight, Github } from "lucide-react";
 import { CASE_STUDIES, CASE_STUDY_ORDER } from "../caseStudies";
 import { ChartBlock } from "../components/site/ChartBlock";
+import { Gallery } from "../components/site/Gallery";
 import { Reveal } from "../components/site/Reveal";
 import { Magnetic } from "../components/site/Magnetic";
 
@@ -162,6 +163,23 @@ export default function CaseStudy() {
           ))}
         </div>
       </section>
+
+      {/* gallery */}
+      {cs.gallery && cs.gallery.length > 0 && (
+        <section className="relative z-10 mx-auto max-w-5xl px-6 py-12" data-testid="case-study-gallery">
+          <Reveal>
+            <div className="mb-8 flex items-baseline gap-4">
+              <span className="font-display text-sm font-medium uppercase tracking-[0.3em] text-[#9A9AA5]">
+                Dashboard gallery
+              </span>
+              <span className="h-px flex-1 bg-white/10" />
+            </div>
+          </Reveal>
+          <Reveal delay={0.05}>
+            <Gallery images={cs.gallery} />
+          </Reveal>
+        </section>
+      )}
 
       {/* next project */}
       <section className="relative z-10 mx-auto max-w-5xl px-6 py-16">
