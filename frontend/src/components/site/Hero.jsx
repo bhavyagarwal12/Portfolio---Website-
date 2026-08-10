@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { Download, ArrowDown, User } from "lucide-react";
+import { Download, ArrowDown } from "lucide-react";
 import { PROFILE } from "../../data";
 
 const useLocalTime = () => {
@@ -100,24 +100,24 @@ export const Hero = () => {
         style={{ opacity: contentOpacity }}
         className="relative z-20 flex flex-1 flex-col items-center justify-center py-10 text-center"
       >
-        {/* photo placeholder */}
+        {/* hero photo */}
         <motion.div
           style={{ y: photoY }}
-          initial={{ opacity: 0, scale: 0.92 }}
+          initial={{ opacity: 0, scale: 0.94 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.15, duration: 1, ease: [0.22, 1, 0.36, 1] }}
-          className="relative mb-8"
-          data-testid="hero-photo-placeholder"
+          transition={{ delay: 0.15, duration: 1.1, ease: [0.22, 1, 0.36, 1] }}
+          className="relative mb-6"
+          data-testid="hero-photo"
         >
-          <div className="absolute -inset-10 rounded-full bg-[#E8E4FF] opacity-20 blur-3xl" />
-          <div className="relative flex h-44 w-36 items-center justify-center overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm sm:h-52 sm:w-44">
-            <div className="flex flex-col items-center gap-2 text-[#6C6C7A]">
-              <User className="h-8 w-8" />
-              <span className="px-4 text-center text-[10px] uppercase tracking-widest">
-                Your photo here
-              </span>
-            </div>
-            <div className="pointer-events-none absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/10 to-transparent" />
+          <div className="pointer-events-none absolute -inset-8 rounded-full bg-[#7C5CFC] opacity-25 blur-[70px]" />
+          <div className="relative w-[240px] overflow-hidden rounded-3xl sm:w-[300px] lg:w-[340px]">
+            <img
+              src="/bhavy-hero.jpeg"
+              alt="Bhavy Agarwal — Data & Analytics Engineer"
+              className="h-full w-full object-cover"
+            />
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-b from-transparent to-[#0A0A0F]" />
+            <div className="pointer-events-none absolute inset-0 rounded-3xl ring-1 ring-inset ring-white/10" />
           </div>
         </motion.div>
 
