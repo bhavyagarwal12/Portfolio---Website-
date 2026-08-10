@@ -1,0 +1,171 @@
+{
+  "project_info": {
+    "name": "Bhavy Agarwal Portfolio",
+    "type": "Single-page scroll portfolio",
+    "mood": "Dark, futuristic, minimal, technical sophistication",
+    "inspiration": "Alex Marex style (Dark AI/tech site)"
+  },
+  "typography": {
+    "headings": {
+      "fontFamily": "Clash Display, sans-serif",
+      "weights": ["600", "700", "900"],
+      "tracking": "tracking-tighter",
+      "usage": "Use for all headlines, section numbers (01, 02), and the main wordmark."
+    },
+    "body": {
+      "fontFamily": "General Sans, Inter, sans-serif",
+      "weights": ["400", "500"],
+      "tracking": "tracking-normal",
+      "leading": "leading-relaxed",
+      "usage": "Use for body copy, buttons, badges, and project descriptions."
+    }
+  },
+  "colors": {
+    "background": {
+      "base": "#0A0A0F",
+      "hero_glow": "radial-gradient(circle at center, #1a1035 0%, #2d1b4e 30%, #0A0A0F 70%)"
+    },
+    "accents": {
+      "primary": "#7C5CFC",
+      "secondary": "#8B7CF6",
+      "spotlight": "#E8E4FF"
+    },
+    "text": {
+      "primary": "#F5F5F7",
+      "secondary": "#9A9AA5",
+      "muted": "#6C6C7A"
+    },
+    "surfaces": {
+      "cards": "#111116",
+      "nav_glass": "rgba(10, 10, 15, 0.6)",
+      "borders": "rgba(124, 92, 252, 0.15)"
+    }
+  },
+  "global_components": {
+    "navbar": {
+      "type": "Floating Pill Glassmorphic",
+      "classes": "fixed top-6 left-1/2 -translate-x-1/2 z-50 rounded-full bg-black/60 backdrop-blur-xl border border-white/10 saturate-150 px-6 py-3 flex items-center gap-6 shadow-2xl shadow-purple-900/20",
+      "active_state": "text-[#7C5CFC] font-medium"
+    },
+    "status_badge": {
+      "type": "Small Pill with pulsing dot",
+      "classes": "inline-flex items-center gap-2 rounded-full border border-white/10 bg-[#111116]/80 backdrop-blur-md px-3 py-1.5 text-xs font-medium text-[#F5F5F7]",
+      "dot_classes": "h-2 w-2 rounded-full bg-[#7C5CFC] animate-pulse shadow-[0_0_8px_rgba(124,92,252,0.8)]"
+    },
+    "project_card": {
+      "type": "Clipped-frame photography card",
+      "classes": "group relative overflow-hidden rounded-2xl bg-[#111116] border border-white/5 hover:border-[#7C5CFC]/30 transition-colors duration-500 flex flex-col",
+      "image_wrapper": "aspect-[16/10] overflow-hidden p-2 pb-0",
+      "image": "h-full w-full object-cover rounded-t-xl grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105",
+      "content_classes": "p-6 flex flex-col gap-4 flex-1"
+    },
+    "buttons": {
+      "primary": "rounded-full bg-[#7C5CFC] hover:bg-[#8B7CF6] text-white px-6 py-3 font-medium transition-all shadow-[0_0_20px_rgba(124,92,252,0.3)] hover:shadow-[0_0_30px_rgba(124,92,252,0.5)] cursor-pointer inline-flex items-center justify-center gap-2",
+      "secondary": "rounded-full bg-transparent border border-white/10 hover:border-white/30 text-[#F5F5F7] px-6 py-3 font-medium backdrop-blur-md transition-all cursor-pointer inline-flex items-center justify-center gap-2"
+    }
+  },
+  "layouts": {
+    "hero": {
+      "structure": "Min-height 100vh, flex flex-col items-center justify-center relative overflow-hidden w-full pt-32 pb-16",
+      "background": "Deep navy-to-purple radial gradient glow fading to solid black at the bottom. The gradient must be applied via a pseudo-element or absolute div positioned behind the content.",
+      "elements": [
+        "Top bar: Location + Live Local Time (left), Status Badge (right, 'OPEN TO WORK').",
+        "Centered large wordmark: 'BHAVY AGARWAL' (Clash Display, 900 weight, tracking-tighter, fluid typography text-5xl to text-8xl max).",
+        "Subheading: 'Turning Raw Data Into Actionable Business Insights' (muted gray, text-lg to text-xl, mt-4).",
+        "Photo Placeholder: A 320x400px (or similar aspect ratio) frame in the center or subtly offset. Use a glassmorphic frame (bg-white/5 border border-white/10 rounded-2xl) with an inner spotlight glow (#E8E4FF glow effect) to suggest where the photo goes.",
+        "CTA: Resume download button and scroll indicator."
+      ]
+    },
+    "trust_strip": {
+      "structure": "Horizontal scrolling marquee (use framer-motion or react-fast-marquee).",
+      "content": "Text 'CERTIFIED IN AI-DRIVEN DATA ANALYTICS' combined with a row of tool logos.",
+      "tools": "Python, SQL, Power BI, Excel, Scikit-learn, Flask, Tableau. Use react-icons (FaPython, DiSqllite, SiPowerbi, SiMicrosoftexcel, SiScikitlearn, SiFlask, SiTableau)."
+    },
+    "about": {
+      "structure": "Bento Grid layout (grid-cols-1 md:grid-cols-12 gap-6) using Mode A (Tetris Grid).",
+      "heading": "Numbered Chapter: '01 // ABOUT'",
+      "title": "Driving Decisions With Smart, Data-Backed Design",
+      "cards": [
+        "Summary Text (col-span-12 md:col-span-8): Big typography emphasizing data-driven approach. Large leading, elegant.",
+        "Education Card (col-span-12 md:col-span-4): Ajay Kumar Garg Engineering College, B.Tech ECE, CGPA 7.5/10, Sep 2023 - May 2027. Styled as a data card."
+      ]
+    },
+    "experience": {
+      "structure": "Vertical timeline layout with a left or center glowing axis line.",
+      "heading": "Numbered Chapter: '02 // EXPERIENCE'",
+      "nodes": [
+        {
+          "company": "Axlero Solutions",
+          "role": "Data Analyst Intern",
+          "details": "Include bullet points of achievements."
+        },
+        {
+          "company": "Dhee Coding Lab",
+          "role": "Incubation Intern",
+          "details": "Include bullet points of achievements."
+        }
+      ]
+    },
+    "projects": {
+      "structure": "Grid layout (grid-cols-1 md:grid-cols-2 lg:grid-cols-3) gap-8.",
+      "heading": "Numbered Chapter: '03 // PROJECTS'",
+      "items": [
+        "UDAAN Student Analytics Dashboard",
+        "Retail Intelligence & Sales Forecasting",
+        "Global Data Job Market Analyzer"
+      ],
+      "card_elements": "Title, Tech-stack tags (small pills with border border-white/10), 2-3 line impact summary (text-sm text-secondary), 'View Case Study ->' button (text-[#7C5CFC] hover:text-[#8B7CF6])."
+    },
+    "skills": {
+      "structure": "Grid of categories: Languages, Data & Analytics, ML & Methods, Tools & Frameworks.",
+      "heading": "Numbered Chapter: '04 // SKILLS'"
+    },
+    "contact": {
+      "structure": "Massive footer layout with generous padding (py-32).",
+      "heading": "Let's Build Something Data-Driven",
+      "form": "Name, Email, Message inputs. Style as dark glassmorphic inputs (bg-white/5 border border-white/10 focus:border-[#7C5CFC]).",
+      "ctas": "Row of action links: 'Email Me', 'Book a Call', Phone, LinkedIn, GitHub."
+    }
+  },
+  "motion": {
+    "libraries": ["framer-motion", "@studio-freight/react-lenis"],
+    "hero_reveal": "Masked line-by-line reveal for the 'BHAVY AGARWAL' wordmark using framer-motion (initial translateY: 100%, animate to 0 with overflow-hidden wrapper).",
+    "scroll_animations": "Subtle fade and slide-up (translateY: 40px to 0, opacity: 0 to 1) while scrolling into view using framer-motion's whileInView.",
+    "parallax": "Use framer-motion useScroll and useTransform for subtle Y-axis parallax on the hero photo placeholder and the radial background glow.",
+    "hover_states": "Interactive elements must provide feedback. Cards slightly lift and border glows, buttons scale 1.02."
+  },
+  "media": {
+    "image_urls": [
+      {
+        "url": "https://images.unsplash.com/photo-1776702683574-f91f73a3cd26?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1NTZ8MHwxfHNlYXJjaHw0fHxkYXRhJTIwYW5hbHl0aWNzJTIwZGFzaGJvYXJkJTIwZGFyayUyMG1vZGV8ZW58MHx8fHwxNzg2MzgxMzc2fDA&ixlib=rb-4.1.0&q=85",
+        "category": "projects",
+        "description": "Dashboard dark mode (Use for UDAAN Student Analytics Dashboard)"
+      },
+      {
+        "url": "https://images.unsplash.com/photo-1618556450991-2f1af64e8191?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjY2NzN8MHwxfHNlYXJjaHwxfHxhYnN0cmFjdCUyMHRlY2hub2xvZ3klMjBuZXR3b3JrfGVufDB8fHxwdXJwbGV8MTc4NjM4MTM3Nnww&ixlib=rb-4.1.0&q=85",
+        "category": "projects",
+        "description": "Purple network abstract (Use for Global Data Job Market Analyzer)"
+      },
+      {
+        "url": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?crop=entropy&cs=srgb&fm=jpg",
+        "category": "projects",
+        "description": "Retail Data Abstract (Use for Retail Intelligence & Sales Forecasting)"
+      }
+    ]
+  },
+  "instructions_to_main_agent": {
+    "testing": "All interactive and key informational elements MUST include a data-testid attribute in kebab-case based on their role.",
+    "transparency": "DO NOT use complete transparent background in header, overlays, or any surface that has content under it. Ensure nav has backdrop-blur.",
+    "file_extensions": "Use .js and .jsx files exclusively, DO NOT use .tsx. Tailwind classes must be placed in className strings.",
+    "dependencies": "You must install: framer-motion, @studio-freight/react-lenis, lucide-react, react-icons, clsx, tailwind-merge.",
+    "design_execution": "Keep it strictly dark mode. No light mode toggle needed as the design is explicitly dark/futuristic. Use precise padding and spacing (p-8 to p-16 between sections)."
+  },
+  "UNIVERSAL_GUIDELINES_FOR_MAIN_AGENT": [
+    "Do not converge toward generic outputs. Use layered z-index hierarchy and glassmorphism.",
+    "Never apply universal transition (transition: all). Target specific properties like transition-colors, transition-transform.",
+    "Do not center-align app container text globally.",
+    "Use 2-3x more spacing than typical designs to maintain premium feel.",
+    "Ensure hover states and micro-animations exist for all interactive elements.",
+    "Never use placeholder URLs (like via.placeholder.com). Use the provided image_urls or build stylized CSS placeholder divs."
+  ]
+}
